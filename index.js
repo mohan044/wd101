@@ -1,15 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registration-form');
     const registrationData = document.getElementById('registration-data');
-    localStorage.removeItem('registrationData');
+
+    const savedData = JSON.parse(localStorage.getItem('registrationData')) || [];
+    savedData.forEach(data => addRowToTable(data));
+
     form.addEventListener('submit', (event) => {
         event.preventDefault();
+
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const dob = document.getElementById('dob').value;
         const terms = document.getElementById('terms').checked;
 
+        // Validate date of birth
         const age = calculateAge(new Date(dob));
         if (age < 18 || age > 55) {
             alert("Age must be between 18 and 55.");
@@ -17,7 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const data = { name, email, password, dob, terms: terms ? true : false };
-        localStorage.setItem('registrationData', JSON.stringify([data]));
+
+        savedData.push(data); 
+        localStorage.setItem('registrationData', JSON.stringify(savedData)); 
         addRowToTable(data);
         form.reset();
     });
